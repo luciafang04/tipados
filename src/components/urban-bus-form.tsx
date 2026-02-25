@@ -32,6 +32,15 @@ const corridorOptions: Array<{ value: CorridorType; label: string }> = [
   { value: "X", label: "Exprés" },
 ];
 
+const isTextFieldName = (
+  name: string,
+): name is Exclude<keyof UrbanBusFormState, "isAccessible"> =>
+  name === "lineCode" ||
+  name === "corridorType" ||
+  name === "origin" ||
+  name === "destination" ||
+  name === "frequencyMinutes";
+
 const initialFormState: UrbanBusFormState = {
   lineCode: "",
   corridorType: "NUM",
@@ -93,11 +102,11 @@ export function UrbanBusForm({
       return;
     }
 
-    if (name === "isAccessible") {
+    if (!isTextFieldName(name)) {
       return;
     }
 
-    setTextField(name as Exclude<keyof UrbanBusFormState, "isAccessible">, e.target.value);
+    setTextField(name, e.target.value);
   };
 
   const handleInfoClick = (e: MouseEvent<HTMLButtonElement>): void => {

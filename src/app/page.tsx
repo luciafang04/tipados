@@ -1,24 +1,63 @@
-﻿"use client";
+"use client";
 
 import { useEffect, useState } from "react";
 import { UrbanBusForm } from "@/components/urban-bus-form";
 import { UrbanBusList } from "@/components/urban-bus-list";
-import type { UrbanBusRoute, UrbanBusRouteInput } from "@/types/bus";
+import type { CorridorType, UrbanBusRoute, UrbanBusRouteInput } from "@/types/bus";
+
+const isObject = (value: unknown): value is Record<string, unknown> =>
+  typeof value === "object" && value !== null;
+
+const isCorridorType = (value: unknown): value is CorridorType =>
+  value === "NUM" || value === "H" || value === "V" || value === "D" || value === "X";
+
+const isUrbanBusRoute = (value: unknown): value is UrbanBusRoute => {
+  if (!isObject(value)) {
+    return false;
+  }
+
+  return (
+    typeof value.id === "string" &&
+    typeof value.lineCode === "string" &&
+    isCorridorType(value.corridorType) &&
+    typeof value.origin === "string" &&
+    typeof value.destination === "string" &&
+    typeof value.frequencyMinutes === "number" &&
+    typeof value.isAccessible === "boolean"
+  );
+};
+
+const parseMessage = async (response: Response): Promise<string | null> => {
+  try {
+    const payload: unknown = await response.json();
+    if (!isObject(payload) || typeof payload.message !== "string") {
+      return null;
+    }
+    return payload.message.trim() === "" ? null : payload.message;
+  } catch {
+    return null;
+  }
+};
+
+const readRoutesResponse = async (response: Response): Promise<UrbanBusRoute[] | null> => {
+  const payload: unknown = await response.json();
+  if (!Array.isArray(payload) || !payload.every(isUrbanBusRoute)) {
+    return null;
+  }
+  return payload;
+};
+
+const readRouteResponse = async (response: Response): Promise<UrbanBusRoute | null> => {
+  const payload: unknown = await response.json();
+  return isUrbanBusRoute(payload) ? payload : null;
+};
 
 const getResponseMessage = async (
   response: Response,
   fallbackMessage: string,
 ): Promise<string> => {
-  try {
-    const data = (await response.json()) as { message?: string };
-    if (typeof data.message === "string" && data.message.trim() !== "") {
-      return data.message;
-    }
-  } catch {
-    return fallbackMessage;
-  }
-
-  return fallbackMessage;
+  const parsed = await parseMessage(response);
+  return parsed ?? fallbackMessage;
 };
 
 export default function Home() {
@@ -35,7 +74,10 @@ export default function Home() {
           throw new Error(await getResponseMessage(response, "No se pudieron cargar las líneas."));
         }
 
-        const data: UrbanBusRoute[] = (await response.json()) as UrbanBusRoute[];
+        const data = await readRoutesResponse(response);
+        if (data === null) {
+          throw new Error("La respuesta del servidor no tiene formato válido.");
+        }
         setRoutes(data);
       } catch (error) {
         setErrorMessage(error instanceof Error ? error.message : "Error cargando datos.");
@@ -58,7 +100,10 @@ export default function Home() {
           throw new Error(await getResponseMessage(response, "No se pudo actualizar la línea."));
         }
 
-        const updatedRoute: UrbanBusRoute = (await response.json()) as UrbanBusRoute;
+        const updatedRoute = await readRouteResponse(response);
+        if (updatedRoute === null) {
+          throw new Error("La ruta actualizada tiene formato inválido.");
+        }
         setRoutes((previousRoutes: UrbanBusRoute[]) =>
           previousRoutes.map((route: UrbanBusRoute) =>
             route.id === updatedRoute.id ? updatedRoute : route,
@@ -83,7 +128,10 @@ export default function Home() {
         throw new Error(await getResponseMessage(response, "No se pudo crear la línea."));
       }
 
-      const createdRoute: UrbanBusRoute = (await response.json()) as UrbanBusRoute;
+      const createdRoute = await readRouteResponse(response);
+      if (createdRoute === null) {
+        throw new Error("La ruta creada tiene formato inválido.");
+      }
       setRoutes((previousRoutes: UrbanBusRoute[]) => [...previousRoutes, createdRoute]);
       return true;
     } catch (error) {
@@ -126,8 +174,7 @@ export default function Home() {
     <main className="app-shell">
       <header className="app-header">
         <h1 className="app-title">Buses Urbanos de Barcelona</h1>
-        <p className="app-subtitle">━━━━━━━━━━ ✧ Gestión de líneas ✧ ━━━━━━━━━━
-</p>
+        <p className="app-subtitle">Gestión de líneas</p>
       </header>
 
       <section className="layout">
@@ -154,4 +201,3 @@ export default function Home() {
     </main>
   );
 }
-

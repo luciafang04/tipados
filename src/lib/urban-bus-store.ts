@@ -1,45 +1,53 @@
 import { kv } from "@vercel/kv";
 import { mkdir, readFile, writeFile } from "node:fs/promises";
 import path from "node:path";
-import type { UrbanBusRoute, UrbanBusRouteInput } from "@/types/bus";
+import type { CorridorType, UrbanBusRoute, UrbanBusRouteInput } from "@/types/bus";
 
 const ROUTES_KEY = "urban-bus-routes";
+const LOCAL_DATA_DIR = path.join(process.cwd(), "data");
+const LOCAL_ROUTES_FILE = path.join(LOCAL_DATA_DIR, "urban-bus-routes.local.json");
 
 const hasKvEnv = (): boolean =>
   Boolean(process.env.KV_REST_API_URL && process.env.KV_REST_API_TOKEN);
 
-type GlobalWithFallbackStore = typeof globalThis & {
-  __urbanBusFallbackStore?: UrbanBusRoute[];
-};
+const isObject = (value: unknown): value is Record<string, unknown> =>
+  typeof value === "object" && value !== null;
 
-const LOCAL_DATA_DIR = path.join(process.cwd(), "data");
-const LOCAL_ROUTES_FILE = path.join(LOCAL_DATA_DIR, "urban-bus-routes.local.json");
+const isCorridorType = (value: unknown): value is CorridorType =>
+  value === "NUM" || value === "H" || value === "V" || value === "D" || value === "X";
 
-const getFallbackStore = (): UrbanBusRoute[] => {
-  const globalStore = globalThis as GlobalWithFallbackStore;
-  if (!Array.isArray(globalStore.__urbanBusFallbackStore)) {
-    globalStore.__urbanBusFallbackStore = [];
+const isUrbanBusRoute = (value: unknown): value is UrbanBusRoute => {
+  if (!isObject(value)) {
+    return false;
   }
-  return globalStore.__urbanBusFallbackStore;
+
+  return (
+    typeof value.id === "string" &&
+    typeof value.lineCode === "string" &&
+    isCorridorType(value.corridorType) &&
+    typeof value.origin === "string" &&
+    typeof value.destination === "string" &&
+    typeof value.frequencyMinutes === "number" &&
+    typeof value.isAccessible === "boolean"
+  );
 };
 
 const readLocalRoutes = async (): Promise<UrbanBusRoute[]> => {
   try {
     const raw = await readFile(LOCAL_ROUTES_FILE, "utf8");
-    const parsed = JSON.parse(raw) as unknown;
+    const parsed: unknown = JSON.parse(raw);
     if (!Array.isArray(parsed)) {
       return [];
     }
-    return parsed as UrbanBusRoute[];
+    return parsed.filter(isUrbanBusRoute);
   } catch {
-    return getFallbackStore();
+    return [];
   }
 };
 
 const writeLocalRoutes = async (routes: UrbanBusRoute[]): Promise<void> => {
   await mkdir(LOCAL_DATA_DIR, { recursive: true });
   await writeFile(LOCAL_ROUTES_FILE, JSON.stringify(routes, null, 2), "utf8");
-  (globalThis as GlobalWithFallbackStore).__urbanBusFallbackStore = routes;
 };
 
 export const listUrbanBusRoutes = async (): Promise<UrbanBusRoute[]> => {
@@ -84,6 +92,7 @@ export const updateUrbanBusRoute = async (
   const updatedRoute: UrbanBusRoute = { id, ...routeData };
   const nextRoutes = [...routes];
   nextRoutes[routeIndex] = updatedRoute;
+
   if (hasKvEnv()) {
     await kv.set(ROUTES_KEY, nextRoutes);
   } else {

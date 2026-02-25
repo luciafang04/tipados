@@ -1,42 +1,41 @@
 import { NextResponse } from "next/server";
-import {
-  createUrbanBusRoute,
-  listUrbanBusRoutes,
-} from "@/lib/urban-bus-store";
+import { createUrbanBusRoute, listUrbanBusRoutes } from "@/lib/urban-bus-store";
 import type { CorridorType, UrbanBusRouteInput } from "@/types/bus";
+
+const isObject = (value: unknown): value is Record<string, unknown> =>
+  typeof value === "object" && value !== null;
 
 const isCorridorType = (value: unknown): value is CorridorType =>
   value === "NUM" || value === "H" || value === "V" || value === "D" || value === "X";
 
 const parseRouteInput = (payload: unknown): UrbanBusRouteInput | null => {
-  if (typeof payload !== "object" || payload === null) {
+  if (!isObject(payload)) {
     return null;
   }
 
-  const data = payload as Partial<UrbanBusRouteInput>;
+  const { lineCode, corridorType, origin, destination, frequencyMinutes, isAccessible } = payload;
   if (
-    typeof data.lineCode !== "string" ||
-    typeof data.origin !== "string" ||
-    typeof data.destination !== "string" ||
-    typeof data.frequencyMinutes !== "number" ||
-    typeof data.isAccessible !== "boolean" ||
-    !isCorridorType(data.corridorType)
+    typeof lineCode !== "string" ||
+    typeof origin !== "string" ||
+    typeof destination !== "string" ||
+    typeof frequencyMinutes !== "number" ||
+    typeof isAccessible !== "boolean" ||
+    !isCorridorType(corridorType)
   ) {
     return null;
   }
 
-  const frequencyMinutes = Number(data.frequencyMinutes);
   if (!Number.isFinite(frequencyMinutes) || frequencyMinutes <= 0) {
     return null;
   }
 
   return {
-    lineCode: data.lineCode.trim(),
-    corridorType: data.corridorType,
-    origin: data.origin.trim(),
-    destination: data.destination.trim(),
+    lineCode: lineCode.trim(),
+    corridorType,
+    origin: origin.trim(),
+    destination: destination.trim(),
     frequencyMinutes,
-    isAccessible: data.isAccessible,
+    isAccessible,
   };
 };
 
@@ -54,7 +53,7 @@ export async function GET() {
 
 export async function POST(request: Request) {
   try {
-    const payload = await request.json();
+    const payload: unknown = await request.json();
     const routeData = parseRouteInput(payload);
 
     if (routeData === null) {

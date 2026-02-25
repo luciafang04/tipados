@@ -43,5 +43,14 @@
     "destination": "Pla Palau",
     "frequencyMinutes": 7,
     "isAccessible": true
+  },
+  {
+    "id": "1b5cc8c6-ed63-430b-a66b-efecd02bbdfe",
+    "lineCode": "H16",
+    "corridorType": "H",
+    "origin": "Zona Franca",
+    "destination": "Fórum",
+    "frequencyMinutes": 8,
+    "isAccessible": true
   }
 ]
