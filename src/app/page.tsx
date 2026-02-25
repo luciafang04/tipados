@@ -53,12 +53,12 @@ export default function Home() {
     <main className="app-shell">
       <header>
         <h1>Buses Urbanos de Barcelona</h1>
-        <p>Gestion de lineas urbanas numericas, H, V y D.</p>
+        <p>Gestión de líneas</p>
       </header>
 
       <section className="layout">
         <div className="panel">
-          <h2>{editingRoute === null ? "Crear linea" : "Editar linea"}</h2>
+          <h2>{editingRoute === null ? "Crear línea" : "Editar línea"}</h2>
           <UrbanBusForm
             editingRoute={editingRoute}
             key={editingRoute?.id ?? "new"}
@@ -68,7 +68,7 @@ export default function Home() {
         </div>
 
         <div className="panel">
-          <h2>Listado de lineas</h2>
+          <h2>Listado de líneas</h2>
           <UrbanBusList
             onDeleteRoute={handleDeleteRoute}
             onEditRoute={handleEditRoute}

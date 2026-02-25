@@ -4,9 +4,8 @@ export type UrbanBusRoute = {
   id: string;
   lineCode: string;
   corridorType: CorridorType;
-  routeName: string;
-  terminalStart: string;
-  terminalEnd: string;
+  origin: string;
+  destination: string;
   frequencyMinutes: number;
   isAccessible: boolean;
 };

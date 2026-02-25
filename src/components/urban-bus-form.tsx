@@ -2,7 +2,6 @@
 
 import { useState } from "react";
 import type { ChangeEvent, FormEvent, MouseEvent } from "react";
-import * as Checkbox from "@radix-ui/react-checkbox";
 import * as Label from "@radix-ui/react-label";
 import type {
   CorridorType,
@@ -19,9 +18,8 @@ type UrbanBusFormProps = {
 type UrbanBusFormState = {
   lineCode: string;
   corridorType: CorridorType;
-  routeName: string;
-  terminalStart: string;
-  terminalEnd: string;
+  origin: string;
+  destination: string;
   frequencyMinutes: string;
   isAccessible: boolean;
 };
@@ -29,9 +27,8 @@ type UrbanBusFormState = {
 const initialFormState: UrbanBusFormState = {
   lineCode: "",
   corridorType: "NUM",
-  routeName: "",
-  terminalStart: "",
-  terminalEnd: "",
+  origin: "",
+  destination: "",
   frequencyMinutes: "",
   isAccessible: false,
 };
@@ -46,9 +43,8 @@ const mapRouteToFormState = (
   return {
     lineCode: editingRoute.lineCode,
     corridorType: editingRoute.corridorType,
-    routeName: editingRoute.routeName,
-    terminalStart: editingRoute.terminalStart,
-    terminalEnd: editingRoute.terminalEnd,
+    origin: editingRoute.origin,
+    destination: editingRoute.destination,
     frequencyMinutes: String(editingRoute.frequencyMinutes),
     isAccessible: editingRoute.isAccessible,
   };
@@ -62,10 +58,25 @@ export function UrbanBusForm({
   const [formData, setFormData] = useState<UrbanBusFormState>(() =>
     mapRouteToFormState(editingRoute),
   );
+  const [showPmrInfo, setShowPmrInfo] = useState<boolean>(false);
 
-  const handleChange = (
-    e: ChangeEvent<HTMLInputElement | HTMLSelectElement>,
-  ): void => {
+  const handleInputChange = (e: ChangeEvent<HTMLInputElement>): void => {
+    const { name, value, type } = e.target;
+    if (type === "checkbox") {
+      setFormData((previousData: UrbanBusFormState) => ({
+        ...previousData,
+        [name]: e.target.checked,
+      }));
+      return;
+    }
+
+    setFormData((previousData: UrbanBusFormState) => ({
+      ...previousData,
+      [name]: value,
+    }));
+  };
+
+  const handleSelectChange = (e: ChangeEvent<HTMLSelectElement>): void => {
     const { name, value } = e.target;
     setFormData((previousData: UrbanBusFormState) => ({
       ...previousData,
@@ -73,11 +84,9 @@ export function UrbanBusForm({
     }));
   };
 
-  const handleAccessibleChange = (checked: boolean | "indeterminate"): void => {
-    setFormData((previousData: UrbanBusFormState) => ({
-      ...previousData,
-      isAccessible: checked === true,
-    }));
+  const handleInfoClick = (e: MouseEvent<HTMLButtonElement>): void => {
+    e.preventDefault();
+    setShowPmrInfo((previousValue: boolean) => !previousValue);
   };
 
   const handleSubmit = (e: FormEvent<HTMLFormElement>): void => {
@@ -91,9 +100,8 @@ export function UrbanBusForm({
     onSaveRoute({
       lineCode: formData.lineCode.trim(),
       corridorType: formData.corridorType,
-      routeName: formData.routeName.trim(),
-      terminalStart: formData.terminalStart.trim(),
-      terminalEnd: formData.terminalEnd.trim(),
+      origin: formData.origin.trim(),
+      destination: formData.destination.trim(),
       frequencyMinutes: parsedFrequency,
       isAccessible: formData.isAccessible,
     });
@@ -110,85 +118,88 @@ export function UrbanBusForm({
 
   const isSubmitDisabled: boolean =
     formData.lineCode.trim() === "" ||
-    formData.routeName.trim() === "" ||
-    formData.terminalStart.trim() === "" ||
-    formData.terminalEnd.trim() === "" ||
+    formData.origin.trim() === "" ||
+    formData.destination.trim() === "" ||
     formData.frequencyMinutes.trim() === "";
 
   return (
     <form className="form-grid" onSubmit={handleSubmit}>
-      <Label.Root htmlFor="lineCode">Numero o codigo de linea</Label.Root>
+      <Label.Root htmlFor="lineCode">Número o código de línea</Label.Root>
       <input
         id="lineCode"
         name="lineCode"
-        onChange={handleChange}
+        onChange={handleInputChange}
         placeholder="Ej: 24, H12, V17 o D20"
         type="text"
         value={formData.lineCode}
       />
 
-      <Label.Root htmlFor="corridorType">Tipo de corredor</Label.Root>
+      <Label.Root htmlFor="corridorType">Tipo de bus</Label.Root>
       <select
         id="corridorType"
         name="corridorType"
-        onChange={handleChange}
+        onChange={handleSelectChange}
         value={formData.corridorType}
       >
-        <option value="NUM">Numerica</option>
-        <option value="H">Horizontal (H)</option>
-        <option value="V">Vertical (V)</option>
-        <option value="D">Diagonal (D)</option>
+        <option value="NUM">Numérica</option>
+        <option value="H">Horizontal</option>
+        <option value="V">Vertical</option>
+        <option value="D">Diagonal</option>
+        <option value="X">Express</option>
+
       </select>
 
-      <Label.Root htmlFor="routeName">Nombre de la linea</Label.Root>
+      <Label.Root htmlFor="origin">Origen</Label.Root>
       <input
-        id="routeName"
-        name="routeName"
-        onChange={handleChange}
-        placeholder="Ej: Passeig de Gracia - Vall d'Hebron"
+        id="origin"
+        name="origin"
+        onChange={handleInputChange}
+        placeholder="Ej: Pl. Catalunya"
         type="text"
-        value={formData.routeName}
+        value={formData.origin}
       />
 
-      <Label.Root htmlFor="terminalStart">Cabecera inicial</Label.Root>
+      <Label.Root htmlFor="destination">Final</Label.Root>
       <input
-        id="terminalStart"
-        name="terminalStart"
-        onChange={handleChange}
+        id="destination"
+        name="destination"
+        onChange={handleInputChange}
         type="text"
-        value={formData.terminalStart}
+        value={formData.destination}
       />
 
-      <Label.Root htmlFor="terminalEnd">Cabecera final</Label.Root>
-      <input
-        id="terminalEnd"
-        name="terminalEnd"
-        onChange={handleChange}
-        type="text"
-        value={formData.terminalEnd}
-      />
-
-      <Label.Root htmlFor="frequencyMinutes">Frecuencia (min)</Label.Root>
+      <Label.Root htmlFor="frequencyMinutes">Frecuéncia (min)</Label.Root>
       <input
         id="frequencyMinutes"
         min={1}
         name="frequencyMinutes"
-        onChange={handleChange}
+        onChange={handleInputChange}
         type="number"
         value={formData.frequencyMinutes}
       />
 
       <div className="checkbox-row">
-        <Checkbox.Root
+        <input
           checked={formData.isAccessible}
-          className="radix-checkbox"
           id="isAccessible"
-          onCheckedChange={handleAccessibleChange}
-        >
-          <span className="check-indicator">OK</span>
-        </Checkbox.Root>
+          name="isAccessible"
+          onChange={handleInputChange}
+          type="checkbox"
+        />
         <Label.Root htmlFor="isAccessible">Adaptada PMR</Label.Root>
+        <button
+          aria-expanded={showPmrInfo}
+          aria-label="Mostrar informacion de PMR"
+          className="info-button"
+          onClick={handleInfoClick}
+          type="button"
+        >
+          i
+        </button>
       </div>
+      {showPmrInfo ? (
+        <p className="pmr-help">PMR son las siglas de Personas con Movilidad Reducida.</p>
+      ) : null}
 
       <div className="button-row">
         <button disabled={isSubmitDisabled} type="submit">

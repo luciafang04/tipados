@@ -41,10 +41,10 @@ export function UrbanBusList({
       {routes.map((route: UrbanBusRoute) => (
         <li className="route-card" key={route.id}>
           <p>
-            <strong>{route.lineCode}</strong> ({route.corridorType}) - {route.routeName}
+            <strong>{route.lineCode}</strong> ({route.corridorType})
           </p>
           <p>
-            {route.terminalStart} - {route.terminalEnd}
+            {route.origin} - {route.destination}
           </p>
           <p>Frecuencia: {route.frequencyMinutes} min</p>
           <p>{route.isAccessible ? "PMR: Si" : "PMR: No"}</p>

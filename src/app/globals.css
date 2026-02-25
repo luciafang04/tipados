@@ -90,6 +90,29 @@ select {
   flex-wrap: wrap;
 }
 
+.info-button {
+  margin-left: 0.45rem;
+  width: 18px;
+  height: 18px;
+  border-radius: 999px;
+  border: 1px solid #94a3b8;
+  background: #ffffff;
+  color: #334155;
+  font-size: 12px;
+  font-weight: 700;
+  line-height: 1;
+  display: inline-grid;
+  place-items: center;
+  cursor: pointer;
+  padding: 0;
+}
+
+.pmr-help {
+  margin: 0;
+  font-size: 0.9rem;
+  color: #334155;
+}
+
 button {
   border: 1px solid transparent;
   border-radius: 8px;
