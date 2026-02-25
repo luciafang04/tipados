@@ -32,7 +32,7 @@ export default function Home() {
         setErrorMessage("");
         const response = await fetch("/api/routes", { cache: "no-store" });
         if (!response.ok) {
-          throw new Error(await getResponseMessage(response, "No se pudieron cargar las lineas."));
+          throw new Error(await getResponseMessage(response, "No se pudieron cargar las líneas."));
         }
 
         const data: UrbanBusRoute[] = (await response.json()) as UrbanBusRoute[];
@@ -55,7 +55,7 @@ export default function Home() {
           body: JSON.stringify(routeData),
         });
         if (!response.ok) {
-          throw new Error(await getResponseMessage(response, "No se pudo actualizar la linea."));
+          throw new Error(await getResponseMessage(response, "No se pudo actualizar la línea."));
         }
 
         const updatedRoute: UrbanBusRoute = (await response.json()) as UrbanBusRoute;
@@ -67,7 +67,7 @@ export default function Home() {
         setEditingRoute(null);
         return true;
       } catch (error) {
-        setErrorMessage(error instanceof Error ? error.message : "Error guardando cambios.");
+        setErrorMessage(error instanceof Error ? error.message : "Error al guardar cambios.");
         return false;
       }
     }
@@ -80,14 +80,14 @@ export default function Home() {
         body: JSON.stringify(routeData),
       });
       if (!response.ok) {
-        throw new Error(await getResponseMessage(response, "No se pudo crear la linea."));
+        throw new Error(await getResponseMessage(response, "No se pudo crear la línea."));
       }
 
       const createdRoute: UrbanBusRoute = (await response.json()) as UrbanBusRoute;
       setRoutes((previousRoutes: UrbanBusRoute[]) => [...previousRoutes, createdRoute]);
       return true;
     } catch (error) {
-      setErrorMessage(error instanceof Error ? error.message : "Error creando linea.");
+      setErrorMessage(error instanceof Error ? error.message : "Error al crear la línea.");
       return false;
     }
   };
@@ -104,7 +104,7 @@ export default function Home() {
       setErrorMessage("");
       const response = await fetch(`/api/routes/${id}`, { method: "DELETE" });
       if (!response.ok) {
-        throw new Error("No se pudo eliminar la linea.");
+        throw new Error("No se pudo eliminar la línea.");
       }
 
       setRoutes((previousRoutes: UrbanBusRoute[]) =>
@@ -114,7 +114,7 @@ export default function Home() {
         setEditingRoute(null);
       }
     } catch (error) {
-      setErrorMessage(error instanceof Error ? error.message : "Error eliminando linea.");
+      setErrorMessage(error instanceof Error ? error.message : "Error al eliminar la línea.");
     }
   };
 
@@ -126,7 +126,8 @@ export default function Home() {
     <main className="app-shell">
       <header className="app-header">
         <h1 className="app-title">Buses Urbanos de Barcelona</h1>
-        <p className="app-subtitle">Gestion de lineas</p>
+        <p className="app-subtitle">━━━━━━━━━━ ✧ Gestión de líneas ✧ ━━━━━━━━━━
+</p>
       </header>
 
       <section className="layout">

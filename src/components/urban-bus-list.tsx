@@ -47,7 +47,7 @@ export function UrbanBusList({
   if (routes.length === 0) {
     return (
       <p className="empty-state">
-        No hay líneas urbanas creadas. Completa el formulario para anadir una.
+        No hay líneas urbanas creadas. Completa el formulario para añadir una.
       </p>
     );
   }
@@ -66,8 +66,8 @@ export function UrbanBusList({
           <p>
             {route.origin} - {route.destination}
           </p>
-          <p>Frecuéncia: {route.frequencyMinutes} min</p>
-          <p>{route.isAccessible ? "PMR: Si" : "PMR: No"}</p>
+          <p>Frecuencia: {route.frequencyMinutes} min</p>
+          <p>{route.isAccessible ? "PMR: Sí" : "PMR: No"}</p>
           <div className="button-row">
             <button onClick={handleEditClick(route.id)} type="button">
               Editar

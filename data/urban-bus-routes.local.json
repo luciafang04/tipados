@@ -27,21 +27,21 @@
     "isAccessible": true
   },
   {
-    "id": "9a58b2ec-d055-4e17-9311-08695fd645a1",
-    "lineCode": "V13",
-    "corridorType": "V",
-    "origin": "Av. Tibidabo",
-    "destination": "Pla Palau",
-    "frequencyMinutes": 7,
-    "isAccessible": true
-  },
-  {
     "id": "40c1d320-9ff8-42b5-b58e-5497eff14346",
     "lineCode": "D50",
     "corridorType": "D",
     "origin": "Av. Paral·lel",
     "destination": "Av. Meridiana",
     "frequencyMinutes": 9,
+    "isAccessible": true
+  },
+  {
+    "id": "dfce9380-d69b-4633-9bb8-3a673bbe513e",
+    "lineCode": "V13",
+    "corridorType": "V",
+    "origin": "Av. Tibidabo",
+    "destination": "Pla Palau",
+    "frequencyMinutes": 7,
     "isAccessible": true
   }
 ]

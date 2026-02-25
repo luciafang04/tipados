@@ -58,7 +58,7 @@ export async function POST(request: Request) {
     const routeData = parseRouteInput(payload);
 
     if (routeData === null) {
-      return NextResponse.json({ message: "Payload invalido." }, { status: 400 });
+      return NextResponse.json({ message: "Payload inválido." }, { status: 400 });
     }
 
     const route = await createUrbanBusRoute(routeData);

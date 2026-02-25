@@ -1,7 +1,7 @@
 ﻿@import "tailwindcss";
 
 :root {
-  --background: #f4f7fb;
+  --background: #fff3b0;
   --surface: #ffffff;
   --foreground: #102036;
   --border: #d9e2ef;
@@ -25,6 +25,12 @@ body {
   font-family: var(--font-jost), sans-serif;
 }
 
+html,
+body {
+  min-height: 100%;
+  background-color: #fff3b0 !important;
+}
+
 h1,
 h2,
 h3,
@@ -42,6 +48,7 @@ h6 {
   max-width: 1080px;
   margin: 0 auto;
   padding: 2rem 1rem;
+  background: #fff3b0;
 }
 
 .layout {

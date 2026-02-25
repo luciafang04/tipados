@@ -51,7 +51,7 @@ export async function PUT(request: Request, context: RouteContext) {
     const routeData = parseRouteInput(payload);
 
     if (routeData === null) {
-      return NextResponse.json({ message: "Payload invalido." }, { status: 400 });
+      return NextResponse.json({ message: "Payload inválido." }, { status: 400 });
     }
 
     const updatedRoute = await updateUrbanBusRoute(id, routeData);

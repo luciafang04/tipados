@@ -25,11 +25,11 @@ type UrbanBusFormState = {
 };
 
 const corridorOptions: Array<{ value: CorridorType; label: string }> = [
-  { value: "NUM", label: "Numerica" },
+  { value: "NUM", label: "Numérica" },
   { value: "H", label: "Horizontal" },
   { value: "V", label: "Vertical" },
   { value: "D", label: "Diagonal" },
-  { value: "X", label: "Express" },
+  { value: "X", label: "Exprés" },
 ];
 
 const initialFormState: UrbanBusFormState = {
@@ -212,7 +212,7 @@ export function UrbanBusForm({
         <Label.Root htmlFor="isAccessible">Adaptada PMR</Label.Root>
         <button
           aria-expanded={showPmrInfo}
-          aria-label="Mostrar informacion de PMR"
+          aria-label="Mostrar información de PMR"
           className="info-button"
           onClick={handleInfoClick}
           type="button"
@@ -226,12 +226,12 @@ export function UrbanBusForm({
 
       <div className="button-row">
         <button className="ghost-button" disabled={isSubmitDisabled} type="submit">
-          {editingRoute === null ? "Guardar linea" : "Actualizar linea"}
+          {editingRoute === null ? "Guardar línea" : "Actualizar línea"}
         </button>
 
         {editingRoute !== null ? (
           <button className="secondary" onClick={handleCancelClick} type="button">
-            Cancelar edicion
+            Cancelar edición
           </button>
         ) : null}
       </div>
