@@ -1,5 +1,6 @@
 ﻿import type { Metadata } from "next";
 import { Geist_Mono, Jost, Playfair_Display } from "next/font/google";
+import { CursorLight } from "@/components/cursor-light";
 import "./globals.css";
 
 const playfair = Playfair_Display({
@@ -32,6 +33,7 @@ export default function RootLayout({
       <body
         className={`${jost.className} ${jost.variable} ${playfair.variable} ${geistMono.variable} antialiased`}
       >
+        <CursorLight />
         {children}
       </body>
     </html>
