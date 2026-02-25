@@ -65,6 +65,12 @@ h6 {
   color: #0f172a;
 }
 
+.error-message {
+  margin: 0 0 0.75rem;
+  color: var(--danger);
+  font-size: 0.9rem;
+}
+
 .form-grid {
   display: grid;
   gap: 0.65rem;
@@ -157,6 +163,20 @@ button {
   flex-wrap: wrap;
 }
 
+.button-row button {
+  background: transparent;
+  border-color: transparent;
+  color: var(--foreground);
+  box-shadow: none;
+}
+
+.button-row button:hover:not(:disabled),
+.button-row button:focus-visible:not(:disabled) {
+  background: #ffffff;
+  border-color: var(--border);
+  box-shadow: 0 6px 18px rgba(15, 23, 42, 0.14);
+}
+
 .info-button {
   margin-left: 0.45rem;
   width: 18px;
@@ -184,6 +204,7 @@ button {
   border: 1px solid transparent;
   border-radius: 8px;
   padding: 0.45rem 0.8rem;
+  font-size: 0.82rem;
   background: var(--primary);
   color: #fff;
   cursor: pointer;
@@ -195,11 +216,25 @@ button:disabled {
 }
 
 button.secondary {
-  background: #64748b;
+  color: #475569;
 }
 
 button.danger {
-  background: var(--danger);
+  color: var(--danger);
+}
+
+button.ghost-button {
+  background: transparent;
+  border-color: transparent;
+  color: var(--foreground);
+  box-shadow: none;
+}
+
+button.ghost-button:hover:not(:disabled),
+button.ghost-button:focus-visible:not(:disabled) {
+  background: #ffffff;
+  border-color: var(--border);
+  box-shadow: 0 6px 18px rgba(15, 23, 42, 0.14);
 }
 
 .route-list {
@@ -214,6 +249,26 @@ button.danger {
   border: 1px solid var(--border);
   border-radius: 10px;
   padding: 0.8rem;
+}
+
+.route-card-num {
+  background: #fee2e2;
+}
+
+.route-card-h {
+  background: #dbeafe;
+}
+
+.route-card-v {
+  background: #dcfce7;
+}
+
+.route-card-d {
+  background: #f3e8ff;
+}
+
+.route-card-x {
+  background: #e5e7eb;
 }
 
 .route-card p {

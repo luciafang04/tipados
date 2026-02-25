@@ -1,4 +1,4 @@
-export type CorridorType = "NUM" | "H" | "V" | "D";
+export type CorridorType = "NUM" | "H" | "V" | "D" | "X";
 
 export type UrbanBusRoute = {
   id: string;

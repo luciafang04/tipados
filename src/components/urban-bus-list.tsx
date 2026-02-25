@@ -1,12 +1,28 @@
 "use client";
 
 import type { MouseEvent } from "react";
-import type { UrbanBusRoute } from "@/types/bus";
+import type { CorridorType, UrbanBusRoute } from "@/types/bus";
 
 type UrbanBusListProps = {
   routes: UrbanBusRoute[];
   onEditRoute: (id: string) => void;
   onDeleteRoute: (id: string) => void;
+};
+
+const corridorClassByType: Record<CorridorType, string> = {
+  NUM: "route-card-num",
+  H: "route-card-h",
+  V: "route-card-v",
+  D: "route-card-d",
+  X: "route-card-x",
+};
+
+const corridorBgByType: Record<CorridorType, string> = {
+  NUM: "#fee2e2",
+  H: "#dbeafe",
+  V: "#dcfce7",
+  D: "#f3e8ff",
+  X: "#e5e7eb",
 };
 
 export function UrbanBusList({
@@ -39,7 +55,11 @@ export function UrbanBusList({
   return (
     <ul className="route-list">
       {routes.map((route: UrbanBusRoute) => (
-        <li className="route-card" key={route.id}>
+        <li
+          className={`route-card ${corridorClassByType[route.corridorType]}`}
+          key={route.id}
+          style={{ backgroundColor: corridorBgByType[route.corridorType] }}
+        >
           <p>
             <strong>{route.lineCode}</strong> ({route.corridorType})
           </p>

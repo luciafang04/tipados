@@ -1,0 +1,47 @@
+[
+  {
+    "id": "82805f3e-86ec-4623-8f61-a7a152d08062",
+    "lineCode": "H12",
+    "corridorType": "H",
+    "origin": "Gornal",
+    "destination": "Verneda",
+    "frequencyMinutes": 8,
+    "isAccessible": true
+  },
+  {
+    "id": "b274ea3c-2b58-42c3-a1fd-b9daca9e77de",
+    "lineCode": "X1",
+    "corridorType": "X",
+    "origin": "Francesc Macià",
+    "destination": "Roc Boronat",
+    "frequencyMinutes": 10,
+    "isAccessible": true
+  },
+  {
+    "id": "b5ed89b3-621c-43d3-b065-9da47a11ba78",
+    "lineCode": "19",
+    "corridorType": "NUM",
+    "origin": "Plaza Cataluña",
+    "destination": "Sant Genís",
+    "frequencyMinutes": 10,
+    "isAccessible": true
+  },
+  {
+    "id": "9a58b2ec-d055-4e17-9311-08695fd645a1",
+    "lineCode": "V13",
+    "corridorType": "V",
+    "origin": "Av. Tibidabo",
+    "destination": "Pla Palau",
+    "frequencyMinutes": 7,
+    "isAccessible": true
+  },
+  {
+    "id": "40c1d320-9ff8-42b5-b58e-5497eff14346",
+    "lineCode": "D50",
+    "corridorType": "D",
+    "origin": "Av. Paral·lel",
+    "destination": "Av. Meridiana",
+    "frequencyMinutes": 9,
+    "isAccessible": true
+  }
+]

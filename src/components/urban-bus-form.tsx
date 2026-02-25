@@ -11,7 +11,7 @@ import type {
 
 type UrbanBusFormProps = {
   editingRoute: UrbanBusRoute | null;
-  onSaveRoute: (routeData: UrbanBusRouteInput) => void;
+  onSaveRoute: (routeData: UrbanBusRouteInput) => Promise<boolean>;
   onCancelEdit: () => void;
 };
 
@@ -105,7 +105,7 @@ export function UrbanBusForm({
     setShowPmrInfo((previousValue: boolean) => !previousValue);
   };
 
-  const handleSubmit = (e: FormEvent<HTMLFormElement>): void => {
+  const handleSubmit = async (e: FormEvent<HTMLFormElement>): Promise<void> => {
     e.preventDefault();
 
     const parsedFrequency: number = Number(formData.frequencyMinutes);
@@ -113,7 +113,7 @@ export function UrbanBusForm({
       return;
     }
 
-    onSaveRoute({
+    const wasSaved = await onSaveRoute({
       lineCode: formData.lineCode.trim(),
       corridorType: formData.corridorType,
       origin: formData.origin.trim(),
@@ -122,7 +122,7 @@ export function UrbanBusForm({
       isAccessible: formData.isAccessible,
     });
 
-    if (editingRoute === null) {
+    if (wasSaved && editingRoute === null) {
       setFormData(initialFormState);
     }
   };
@@ -196,6 +196,7 @@ export function UrbanBusForm({
         min={1}
         name="frequencyMinutes"
         onChange={handleInputChange}
+        placeholder="10"
         type="number"
         value={formData.frequencyMinutes}
       />
@@ -224,7 +225,7 @@ export function UrbanBusForm({
       ) : null}
 
       <div className="button-row">
-        <button disabled={isSubmitDisabled} type="submit">
+        <button className="ghost-button" disabled={isSubmitDisabled} type="submit">
           {editingRoute === null ? "Guardar linea" : "Actualizar linea"}
         </button>
 

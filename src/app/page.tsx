@@ -1,31 +1,95 @@
 ﻿"use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { UrbanBusForm } from "@/components/urban-bus-form";
 import { UrbanBusList } from "@/components/urban-bus-list";
 import type { UrbanBusRoute, UrbanBusRouteInput } from "@/types/bus";
 
+const getResponseMessage = async (
+  response: Response,
+  fallbackMessage: string,
+): Promise<string> => {
+  try {
+    const data = (await response.json()) as { message?: string };
+    if (typeof data.message === "string" && data.message.trim() !== "") {
+      return data.message;
+    }
+  } catch {
+    return fallbackMessage;
+  }
+
+  return fallbackMessage;
+};
+
 export default function Home() {
   const [routes, setRoutes] = useState<UrbanBusRoute[]>([]);
   const [editingRoute, setEditingRoute] = useState<UrbanBusRoute | null>(null);
+  const [errorMessage, setErrorMessage] = useState<string>("");
 
-  const handleSaveRoute = (routeData: UrbanBusRouteInput): void => {
-    if (editingRoute !== null) {
-      setRoutes((previousRoutes: UrbanBusRoute[]) =>
-        previousRoutes.map((route: UrbanBusRoute) =>
-          route.id === editingRoute.id ? { ...editingRoute, ...routeData } : route,
-        ),
-      );
-      setEditingRoute(null);
-      return;
-    }
+  useEffect(() => {
+    const loadRoutes = async (): Promise<void> => {
+      try {
+        setErrorMessage("");
+        const response = await fetch("/api/routes", { cache: "no-store" });
+        if (!response.ok) {
+          throw new Error(await getResponseMessage(response, "No se pudieron cargar las lineas."));
+        }
 
-    const newRoute: UrbanBusRoute = {
-      id: crypto.randomUUID(),
-      ...routeData,
+        const data: UrbanBusRoute[] = (await response.json()) as UrbanBusRoute[];
+        setRoutes(data);
+      } catch (error) {
+        setErrorMessage(error instanceof Error ? error.message : "Error cargando datos.");
+      }
     };
 
-    setRoutes((previousRoutes: UrbanBusRoute[]) => [...previousRoutes, newRoute]);
+    void loadRoutes();
+  }, []);
+
+  const handleSaveRoute = async (routeData: UrbanBusRouteInput): Promise<boolean> => {
+    if (editingRoute !== null) {
+      try {
+        setErrorMessage("");
+        const response = await fetch(`/api/routes/${editingRoute.id}`, {
+          method: "PUT",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(routeData),
+        });
+        if (!response.ok) {
+          throw new Error(await getResponseMessage(response, "No se pudo actualizar la linea."));
+        }
+
+        const updatedRoute: UrbanBusRoute = (await response.json()) as UrbanBusRoute;
+        setRoutes((previousRoutes: UrbanBusRoute[]) =>
+          previousRoutes.map((route: UrbanBusRoute) =>
+            route.id === updatedRoute.id ? updatedRoute : route,
+          ),
+        );
+        setEditingRoute(null);
+        return true;
+      } catch (error) {
+        setErrorMessage(error instanceof Error ? error.message : "Error guardando cambios.");
+        return false;
+      }
+    }
+
+    try {
+      setErrorMessage("");
+      const response = await fetch("/api/routes", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(routeData),
+      });
+      if (!response.ok) {
+        throw new Error(await getResponseMessage(response, "No se pudo crear la linea."));
+      }
+
+      const createdRoute: UrbanBusRoute = (await response.json()) as UrbanBusRoute;
+      setRoutes((previousRoutes: UrbanBusRoute[]) => [...previousRoutes, createdRoute]);
+      return true;
+    } catch (error) {
+      setErrorMessage(error instanceof Error ? error.message : "Error creando linea.");
+      return false;
+    }
   };
 
   const handleEditRoute = (id: string): void => {
@@ -35,13 +99,22 @@ export default function Home() {
     setEditingRoute(selectedRoute ?? null);
   };
 
-  const handleDeleteRoute = (id: string): void => {
-    setRoutes((previousRoutes: UrbanBusRoute[]) =>
-      previousRoutes.filter((route: UrbanBusRoute) => route.id !== id),
-    );
+  const handleDeleteRoute = async (id: string): Promise<void> => {
+    try {
+      setErrorMessage("");
+      const response = await fetch(`/api/routes/${id}`, { method: "DELETE" });
+      if (!response.ok) {
+        throw new Error("No se pudo eliminar la linea.");
+      }
 
-    if (editingRoute !== null && editingRoute.id === id) {
-      setEditingRoute(null);
+      setRoutes((previousRoutes: UrbanBusRoute[]) =>
+        previousRoutes.filter((route: UrbanBusRoute) => route.id !== id),
+      );
+      if (editingRoute !== null && editingRoute.id === id) {
+        setEditingRoute(null);
+      }
+    } catch (error) {
+      setErrorMessage(error instanceof Error ? error.message : "Error eliminando linea.");
     }
   };
 
@@ -53,15 +126,13 @@ export default function Home() {
     <main className="app-shell">
       <header className="app-header">
         <h1 className="app-title">Buses Urbanos de Barcelona</h1>
-        <p className="app-subtitle">━━━━━━━ ✧ Gestión de líneas ✧ ━━━━━━━
-        </p>
+        <p className="app-subtitle">Gestion de lineas</p>
       </header>
 
       <section className="layout">
         <div className="panel">
-          <h2 className="panel-title">
-            {editingRoute === null ? "Crear línea" : "Editar línea"}
-          </h2>
+          <h2 className="panel-title">{editingRoute === null ? "Crear línea" : "Editar línea"}</h2>
+          {errorMessage !== "" ? <p className="error-message">{errorMessage}</p> : null}
           <UrbanBusForm
             editingRoute={editingRoute}
             key={editingRoute?.id ?? "new"}
@@ -82,3 +153,4 @@ export default function Home() {
     </main>
   );
 }
+
