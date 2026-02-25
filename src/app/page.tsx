@@ -174,7 +174,8 @@ export default function Home() {
     <main className="app-shell">
       <header className="app-header">
         <h1 className="app-title">Buses Urbanos de Barcelona</h1>
-        <p className="app-subtitle">Gestión de líneas</p>
+        <p className="app-subtitle">━━━━━━━━━━ ✧ Gestión de líneas ✧ ━━━━━━━━━━
+</p>
       </header>
 
       <section className="layout">
