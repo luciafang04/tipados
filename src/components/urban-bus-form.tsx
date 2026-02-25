@@ -1,4 +1,4 @@
-"use client";
+﻿"use client";
 
 import { useState } from "react";
 import type { ChangeEvent, FormEvent, MouseEvent } from "react";
@@ -23,6 +23,14 @@ type UrbanBusFormState = {
   frequencyMinutes: string;
   isAccessible: boolean;
 };
+
+const corridorOptions: Array<{ value: CorridorType; label: string }> = [
+  { value: "NUM", label: "Numerica" },
+  { value: "H", label: "Horizontal" },
+  { value: "V", label: "Vertical" },
+  { value: "D", label: "Diagonal" },
+  { value: "X", label: "Express" },
+];
 
 const initialFormState: UrbanBusFormState = {
   lineCode: "",
@@ -60,28 +68,36 @@ export function UrbanBusForm({
   );
   const [showPmrInfo, setShowPmrInfo] = useState<boolean>(false);
 
+  const setTextField = (
+    field: Exclude<keyof UrbanBusFormState, "isAccessible">,
+    value: string,
+  ): void => {
+    setFormData((previousData: UrbanBusFormState) => ({
+      ...previousData,
+      [field]: value,
+    }));
+  };
+
   const handleInputChange = (e: ChangeEvent<HTMLInputElement>): void => {
-    const { name, value, type } = e.target;
+    const { name, type } = e.target;
+
     if (type === "checkbox") {
+      if (name !== "isAccessible") {
+        return;
+      }
+
       setFormData((previousData: UrbanBusFormState) => ({
         ...previousData,
-        [name]: e.target.checked,
+        isAccessible: e.target.checked,
       }));
       return;
     }
 
-    setFormData((previousData: UrbanBusFormState) => ({
-      ...previousData,
-      [name]: value,
-    }));
-  };
+    if (name === "isAccessible") {
+      return;
+    }
 
-  const handleSelectChange = (e: ChangeEvent<HTMLSelectElement>): void => {
-    const { name, value } = e.target;
-    setFormData((previousData: UrbanBusFormState) => ({
-      ...previousData,
-      [name]: value,
-    }));
+    setTextField(name as Exclude<keyof UrbanBusFormState, "isAccessible">, e.target.value);
   };
 
   const handleInfoClick = (e: MouseEvent<HTMLButtonElement>): void => {
@@ -124,8 +140,9 @@ export function UrbanBusForm({
 
   return (
     <form className="form-grid" onSubmit={handleSubmit}>
-      <Label.Root htmlFor="lineCode">Número o código de línea</Label.Root>
+      <Label.Root htmlFor="lineCode">Número o código de línea:</Label.Root>
       <input
+        className="line-field"
         id="lineCode"
         name="lineCode"
         onChange={handleInputChange}
@@ -134,23 +151,25 @@ export function UrbanBusForm({
         value={formData.lineCode}
       />
 
-      <Label.Root htmlFor="corridorType">Tipo de bus</Label.Root>
-      <select
-        id="corridorType"
-        name="corridorType"
-        onChange={handleSelectChange}
-        value={formData.corridorType}
-      >
-        <option value="NUM">Numérica</option>
-        <option value="H">Horizontal</option>
-        <option value="V">Vertical</option>
-        <option value="D">Diagonal</option>
-        <option value="X">Express</option>
+      <fieldset className="radio-group">
+        <legend>Tipo de bus</legend>
+        {corridorOptions.map((option: { value: CorridorType; label: string }) => (
+          <label className="radio-option" key={option.value}>
+            <input
+              checked={formData.corridorType === option.value}
+              name="corridorType"
+              onChange={handleInputChange}
+              type="radio"
+              value={option.value}
+            />
+            <span>{option.label}</span>
+          </label>
+        ))}
+      </fieldset>
 
-      </select>
-
-      <Label.Root htmlFor="origin">Origen</Label.Root>
+      <Label.Root htmlFor="origin">Origen:</Label.Root>
       <input
+        className="line-field"
         id="origin"
         name="origin"
         onChange={handleInputChange}
@@ -161,15 +180,18 @@ export function UrbanBusForm({
 
       <Label.Root htmlFor="destination">Final</Label.Root>
       <input
+        className="line-field"
         id="destination"
         name="destination"
         onChange={handleInputChange}
+        placeholder="Ej: Pl. Espanya"
         type="text"
         value={formData.destination}
       />
 
-      <Label.Root htmlFor="frequencyMinutes">Frecuéncia (min)</Label.Root>
+      <Label.Root htmlFor="frequencyMinutes">Frecuencia (min)</Label.Root>
       <input
+        className="line-field"
         id="frequencyMinutes"
         min={1}
         name="frequencyMinutes"
@@ -208,7 +230,7 @@ export function UrbanBusForm({
 
         {editingRoute !== null ? (
           <button className="secondary" onClick={handleCancelClick} type="button">
-            Cancelar edición
+            Cancelar edicion
           </button>
         ) : null}
       </div>
