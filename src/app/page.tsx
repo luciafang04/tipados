@@ -1,4 +1,4 @@
-"use client";
+﻿"use client";
 
 import { useState } from "react";
 import { UrbanBusForm } from "@/components/urban-bus-form";
@@ -51,9 +51,9 @@ export default function Home() {
 
   return (
     <main className="app-shell">
-      <header>
-        <h1>Buses Urbanos de Barcelona</h1>
-        <p>Gestión de líneas</p>
+      <header className="app-header">
+        <h1 className="app-title">Buses Urbanos de Barcelona</h1>
+        <p className="app-subtitle">Gestión de líneas</p>
       </header>
 
       <section className="layout">

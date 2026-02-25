@@ -1,4 +1,4 @@
-@import "tailwindcss";
+﻿@import "tailwindcss";
 
 :root {
   --background: #f4f7fb;
@@ -12,7 +12,8 @@
 @theme inline {
   --color-background: var(--background);
   --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
+  --font-sans: var(--font-lora);
+  --font-serif: var(--font-playfair);
   --font-mono: var(--font-geist-mono);
 }
 
@@ -20,7 +21,16 @@ body {
   margin: 0;
   background: var(--background);
   color: var(--foreground);
-  font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+  font-family: var(--font-lora), serif;
+}
+
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+  font-family: var(--font-playfair), serif;
 }
 
 * {
@@ -155,4 +165,23 @@ button.danger {
 
 .empty-state {
   color: #475569;
+}
+
+.app-header {
+  text-align: center;
+  margin-bottom: 1.5rem;
+}
+
+.app-title {
+  margin: 0;
+  font-size: clamp(2rem, 4vw, 3rem);
+  font-weight: 800;
+  line-height: 1.1;
+}
+
+.app-subtitle {
+  margin: 0.45rem 0 0;
+  font-size: clamp(1rem, 2vw, 1.2rem);
+  font-weight: 500;
+  color: #334155;
 }

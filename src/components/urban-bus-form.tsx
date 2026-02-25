@@ -198,7 +198,7 @@ export function UrbanBusForm({
         </button>
       </div>
       {showPmrInfo ? (
-        <p className="pmr-help">PMR son las siglas de Personas con Movilidad Reducida.</p>
+        <p className="pmr-help">Personas con Movilidad Reducida</p>
       ) : null}
 
       <div className="button-row">
@@ -208,7 +208,7 @@ export function UrbanBusForm({
 
         {editingRoute !== null ? (
           <button className="secondary" onClick={handleCancelClick} type="button">
-            Cancelar edicion
+            Cancelar edición
           </button>
         ) : null}
       </div>
